@@ -13,3 +13,6 @@ venv
 
 # vscode
 .vscode
+
+# poetry local settings
+**/poetry.toml
