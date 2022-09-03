@@ -22,7 +22,7 @@ async def get_all_users() -> JSONResponse:
     return JSONResponse(content=jsonable_encoder(response))
 
 
-@router.get("/{id}")
+@router.get("/{id}", status_code=status.HTTP_200_OK)
 async def get_user(id: str) -> JSONResponse:
     response: Dict[str, Any] = {}
     mongo = Mongo()
@@ -32,7 +32,7 @@ async def get_user(id: str) -> JSONResponse:
     return JSONResponse(content=jsonable_encoder(response))
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: CreateUser = Body()) -> JSONResponse:
     response: Dict[str, Any] = {}
     mongo = Mongo()
@@ -42,7 +42,7 @@ async def create_user(user: CreateUser = Body()) -> JSONResponse:
     return JSONResponse(content=jsonable_encoder(response))
 
 
-@router.patch("/{id}")
+@router.patch("/{id}", status_code=status.HTTP_205_RESET_CONTENT)
 async def update_user(id: str, user: UpdateUser = Body()) -> JSONResponse:
     response: Dict[str, Any] = {}
     mongo = Mongo()
