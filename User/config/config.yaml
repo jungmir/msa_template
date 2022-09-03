@@ -1,6 +1,7 @@
 app:
-  name: User Service
+  name: User
   version: 0.1.0
 database:
-  host: localhost
+  host: mongo
   port: 27017
+  db_name: ${app.name}
