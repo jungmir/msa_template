@@ -1,1 +1,0 @@
-docker run --rm -it -p "8888:8888" -e ENV=dev --name test -v "$(pwd)"/app:/workspace/user/app base_image /bin/bash
