@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def get_all_users() -> JSONResponse:
+async def get_all_users() -> JSONResponse:
     response: Dict[str, Any] = {}
     mongo = Mongo()
     with mongo("user") as user_database:
@@ -23,7 +23,7 @@ def get_all_users() -> JSONResponse:
 
 
 @router.get("/{id}")
-def get_user(id: str) -> JSONResponse:
+async def get_user(id: str) -> JSONResponse:
     response: Dict[str, Any] = {}
     mongo = Mongo()
     with mongo("user") as user_database:
@@ -33,7 +33,7 @@ def get_user(id: str) -> JSONResponse:
 
 
 @router.post("/")
-def create_user(user: CreateUser = Body()) -> JSONResponse:
+async def create_user(user: CreateUser = Body()) -> JSONResponse:
     response: Dict[str, Any] = {}
     mongo = Mongo()
     with mongo("user") as user_database:
@@ -43,7 +43,7 @@ def create_user(user: CreateUser = Body()) -> JSONResponse:
 
 
 @router.patch("/{id}")
-def update_user(id: str, user: UpdateUser = Body()) -> JSONResponse:
+async def update_user(id: str, user: UpdateUser = Body()) -> JSONResponse:
     response: Dict[str, Any] = {}
     mongo = Mongo()
     with mongo("user") as user_database:
