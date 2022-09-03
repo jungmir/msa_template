@@ -10,6 +10,7 @@ from pymongo import MongoClient
 from pymongo.client_session import ClientSession
 from pymongo.collection import Collection
 from pymongo.database import Database
+from pymongo.results import _WriteResult
 
 cfg = config("database")
 USERNAME = environ.get("MONGO_ROOT_USERNAME", "")
@@ -79,14 +80,6 @@ class Mongo:
             raise Exception("Database is empty")
         return self.__database.list_collection_names()
 
-    def insert(self, data: Dict[str, Any]) -> None:
-        if self.__collection is None:
-            raise Exception("Collection is empty")
-        self.__collection.insert_one(data)
-
-    def bulk_insert(self):
-        pass
-
     @staticmethod
     def serialize(data: Any) -> Any:
         if isinstance(data, Dict):
@@ -100,50 +93,82 @@ class Mongo:
             return str(data)
         return data
 
-    def find(self, query: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def __check_collection(self) -> None:
         if self.__collection is None:
-            raise Exception("Collection is empty")
-        result = self.__collection.find_one(query)
+            raise Exception("Collection is None")
+
+    @staticmethod
+    def _check_acknowledged(result: _WriteResult) -> None:
+        if not result.acknowledged:
+            raise Exception("Can't execute write operation")
+
+    def insert(self, data: Dict[str, Any]) -> str:
+        self.__check_collection()
+        result = self.__collection.insert_one(data)
+        Mongo._check_acknowledged(result)
+        return result.inserted_id
+
+    def bulk_insert(self):
+        pass
+
+    def find(self, filter_query: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        self.__check_collection()
+        result = self.__collection.find_one(filter=filter_query)
         return Mongo.serialize(result)
 
     def find_by_id(self, id: str) -> Dict[str, Any]:
-        query = {"_id": ObjectId(id)}
-        return self.find(query)
+        filter_query = {"_id": ObjectId(id)}
+        return self.find(filter_query)
 
-    def finds(self, query: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        if self.__collection is None:
-            raise Exception("Collection is empty")
-        result = list(self.__collection.find(query))
+    def finds(
+        self, filter_query: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
+        self.__check_collection()
+        result = list(self.__collection.find(filter=filter_query))
         return Mongo.serialize(result)
+
+    def finds_by_id(self, id: str) -> List[Dict[str, Any]]:
+        self.__check_collection()
+        filter_query = {"_id": id}
+        return self.finds(filter_query)
 
     def update(
         self, filter_query: Dict[str, Any], update_data: Dict[str, Any]
     ) -> Tuple[int, int]:
-        if self.__collection is None:
-            raise Exception("Collection is empty")
+        self.__check_collection()
         update_query = {"$set": update_data}
         result = self.__collection.update_one(filter=filter_query, update=update_query)
+        Mongo._check_acknowledged(result)
         return (result.matched_count, result.modified_count)
 
     def update_by_id(self, id: str, update_data: Dict[str, Any]) -> Tuple[int, int]:
+        self.__check_collection()
         filter_query = {"_id": ObjectId(id)}
         return self.update(filter_query, update_data)
 
-    def updates_by_id(self, id: str, update_data: Dict[str, Any]) -> Tuple[int, int]:
-        filter_query = {"_id": ObjectId(id)}
-        return self.updates(filter_query, update_data)
-
-    def updates(
-        self,
-        filter_query: Dict[str, Any],
-        update_data: Dict[str, Any],
-    ) -> Tuple[int, int]:
-        if self.__collection is None:
-            raise Exception("Collection is empty")
-
+    def upsert(
+        self, filter_query: Dict[str, Any], update_data: Dict[str, Any]
+    ) -> Tuple[int, int, int]:
+        self.__check_collection()
         update_query = {"$set": update_data}
-        result = self.__collection.update_many(filter=filter_query, update=update_query)
-        return (result.matched_count, result.modified_count)
+        result = self.__collection.update_one(
+            filter=filter_query, update=update_query, upsert=True
+        )
+        Mongo._check_acknowledged(result)
+        return (result.matched_count, result.modified_count, result.upserted_id)
 
-    def delete(self):
-        pass
+    def upsert_by_id(self, id: str, update_data: Dict[str, Any]) -> Tuple[int, int, int]:
+        self.__check_collection()
+        filter_query = {"_id": id}
+        return self.upsert(filter_query, update_data)
+
+    def delete(self, filter_query: Dict[str, Any]) -> int:
+        self.__check_collection()
+        result = self.__collection.delete_one(filter=filter_query)
+        Mongo._check_acknowledged(result)
+        return result.deleted_count
+
+    def delete_by_id(self, id: str) -> int:
+        self.__check_collection()
+        filter_query = {"_id": ObjectId(id)}
+        return self.delete(filter_query)
