@@ -17,8 +17,11 @@ services:
     restart: unless-stopped
     container_name: user_service
     env_file: .env
+    environment:
+      MONGO_USER_NAME: ${MONGO_ROOT_USERNAME}
+      MONGO_USER_PASSWORD: ${MONGO_ROOT_PASSWORD}
     ports:
-      - "${PORT}:8080"
+      - "${PORT}:8000"
     volumes:
       - .:/workspace
     networks:
