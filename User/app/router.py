@@ -52,3 +52,13 @@ async def update_user(id: str, user: UpdateUser = Body()) -> JSONResponse:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     response.update(result={"matched": matched, "modified": modified})
     return JSONResponse(content=jsonable_encoder(response))
+
+
+@router.delete("/{id}", status_code=status.HTTP_205_RESET_CONTENT)
+async def delete_user(id: str) -> JSONResponse:
+    response: Dict[str, Any] = {}
+    mongo = Mongo()
+    with mongo("user") as user_database:
+        deleted = user_database.delete_by_id(id)
+    response.update(result={"deleted": deleted})
+    return JSONResponse(content=jsonable_encoder(response))
