@@ -1,24 +1,12 @@
-FROM ubuntu:20.04
+FROM base_user_service
 
-ARG APP_NAME="user"
-ARG PORT
-ARG ENV
+WORKDIR /workspace
 
-ENV ENV=$ENV
-ENV PORT=$PORT
-ENV PYTHONPATH=/workspace/$APP_NAME/app:${PATH}
+COPY ./requirements/requirements.txt /workspace/requirements/requirements.txt
+COPY ./app /workspace/app
 
-RUN echo $PYTHONPATH
+RUN pip3 install -r ./requirements/requirements.txt
 
-RUN apt-get -qq update && apt-get install -y python3-pip
-
-WORKDIR /workspace/$APP_NAME
-
-COPY ./requirements /workspace/$APP_NAME/requirements
-COPY ./app /workspace/$APP_NAME/app
-
-RUN pip3 install -r ./requirements/requirements.$ENV.txt
-
-WORKDIR /workspace/$APP_NAME/app
+WORKDIR /workspace/app
 
 ENTRYPOINT ["python3", "main.py"]
