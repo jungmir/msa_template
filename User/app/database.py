@@ -106,6 +106,10 @@ class Mongo:
         result = self.__collection.find_one(query)
         return Mongo.serialize(result)
 
+    def find_by_id(self, id: str) -> Dict[str, Any]:
+        query = {"_id": ObjectId(id)}
+        return self.find(query)
+
     def finds(self, query: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         if self.__collection is None:
             raise Exception("Collection is empty")
