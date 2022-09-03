@@ -18,11 +18,9 @@ repos:
         args:
             - "-a"
             - "from __future__ import annotations"
-            - "--append-only"
-            - "*.py"
             - "--profile"
             - "black"
-            - "--line-length=90"
+            - "-l 90"
 -   repo: https://github.com/PyCQA/autoflake
     rev: v1.5.3
     hooks:
@@ -30,7 +28,7 @@ repos:
         args:
             - "--remove-all-unused-imports"
             - "--remove-unused-variables"
-            - "expand-star-imports"
+            - "--expand-star-imports"
 -   repo: https://github.com/psf/black
     rev: 22.8.0
     hooks:
