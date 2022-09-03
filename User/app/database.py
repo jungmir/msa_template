@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from os import environ
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from bson.objectid import ObjectId
 from conf import config
@@ -112,11 +112,34 @@ class Mongo:
         result = list(self.__collection.find(query))
         return Mongo.serialize(result)
 
-    def update(self):
-        pass
+    def update(
+        self, filter_query: Dict[str, Any], update_data: Dict[str, Any]
+    ) -> Tuple[int, int]:
+        if self.__collection is None:
+            raise Exception("Collection is empty")
+        update_query = {"$set": update_data}
+        result = self.__collection.update_one(filter=filter_query, update=update_query)
+        return (result.matched_count, result.modified_count)
 
-    def updates(self):
-        pass
+    def update_by_id(self, id: str, update_data: Dict[str, Any]) -> Tuple[int, int]:
+        filter_query = {"_id": ObjectId(id)}
+        return self.update(filter_query, update_data)
+
+    def updates_by_id(self, id: str, update_data: Dict[str, Any]) -> Tuple[int, int]:
+        filter_query = {"_id": ObjectId(id)}
+        return self.updates(filter_query, update_data)
+
+    def updates(
+        self,
+        filter_query: Dict[str, Any],
+        update_data: Dict[str, Any],
+    ) -> Tuple[int, int]:
+        if self.__collection is None:
+            raise Exception("Collection is empty")
+
+        update_query = {"$set": update_data}
+        result = self.__collection.update_many(filter=filter_query, update=update_query)
+        return (result.matched_count, result.modified_count)
 
     def delete(self):
         pass
