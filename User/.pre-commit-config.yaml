@@ -10,7 +10,6 @@ repos:
     -   id: check-ast
     -   id: check-yaml
     -   id: fix-encoding-pragma
-    -   id: check-docstring-first
 -   repo: https://github.com/pycqa/isort
     rev: 5.10.1
     hooks:
