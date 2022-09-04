@@ -1,0 +1,14 @@
+app:
+  name: Auth
+  version: 0.1.0
+token:
+  algorithm: HS256
+  expiry:
+    hours: 1
+server:
+  user:
+    protocol: http://
+    host: user_service
+    port: 8000
+    prefix: api/v1/user
+    url: ${.protocol}${.host}:${.port}/${.prefix}

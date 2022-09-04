@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  auth:
+    image: ghcr.io/jungmir/msa_template/auth_service:master
+    restart: unless-stopped
+    container_name: auth_service
+    env_file: .env
+    ports:
+      - "${PORT}:8000"
+    volumes:
+      - .:/workspace
+    networks:
+      - closed
+
+volumes:
+  mongo:
+
+networks:
+  closed:
+    name: closed
+    external: true
