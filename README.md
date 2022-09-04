@@ -1,4 +1,4 @@
-# Cloud Native Project With DevOps and GitOps
+# MSA Template Repository for GitOps
 
 ## Goal
 
