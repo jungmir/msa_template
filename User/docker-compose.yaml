@@ -16,10 +16,7 @@ services:
     networks:
       - closed
   user:
-    image: user_service
-    build:
-      context: .
-      dockerfile: docker/dev/Dockefile
+    image: ghcr.io/jungmir/msa_template/user_service:master
     restart: unless-stopped
     container_name: user_service
     env_file: .env
