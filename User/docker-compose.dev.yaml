@@ -3,6 +3,12 @@ version: "3"
 services:
   mongodb:
     image: mongo
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo:/data/db
     restart: unless-stopped
     container_name: mongo
     ports:
@@ -13,7 +19,7 @@ services:
     image: user_service
     build:
       context: .
-      dockerfile: docker/dockerfile.dev
+      dockerfile: docker/dev/Dockefile
     restart: unless-stopped
     container_name: user_service
     env_file: .env
@@ -26,6 +32,9 @@ services:
       - .:/workspace
     networks:
       - closed
+
+volumes:
+  mongo:
 
 networks:
   closed:
