@@ -16,3 +16,6 @@ venv
 
 # poetry local settings
 **/poetry.toml
+
+# ghcr account token
+TOKEN.txt
