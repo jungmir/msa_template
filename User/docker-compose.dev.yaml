@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  mongodb:
+    image: mongo
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo:/data/db
+    restart: unless-stopped
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - closed
+  user:
+    image: user_service
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    container_name: user_service
+    env_file: .env
+    environment:
+      MONGO_USER_NAME: ${MONGO_ROOT_USERNAME}
+      MONGO_USER_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    ports:
+      - "${PORT}:8000"
+    volumes:
+      - .:/workspace
+    networks:
+      - closed
+
+volumes:
+  mongo:
+
+networks:
+  closed:
+    name: closed
+    external: true
