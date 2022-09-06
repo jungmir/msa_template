@@ -5,3 +5,11 @@ database:
   host: mongo
   port: 27017
   db_name: ${app.name}
+server:
+  auth:
+    protocol: http://
+    host: auth_service
+    port: 8000
+    prefix: api/v1/auth
+    url: ${.protocol}${.host}:${.port}/${.prefix}
+    verify_url: ${.url}/verfiy
