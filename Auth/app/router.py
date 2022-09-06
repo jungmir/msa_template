@@ -31,4 +31,6 @@ async def verify_token(authorization: str = Header()) -> Response:
     token = Token(type=token_type, access_token=access_token)
     if not token.verify():
         return Response(status_code=status.HTTP_401_UNAUTHORIZED)
-    return Response(status_code=status.HTTP_200_OK)
+    return JSONResponse(
+        content=jsonable_encoder(token.payload), status_code=status.HTTP_200_OK
+    )
