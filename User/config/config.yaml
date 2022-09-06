@@ -7,9 +7,8 @@ database:
   db_name: ${app.name}
 server:
   auth:
-    protocol: http://
-    host: auth_service
+    host: http://auth_service
     port: 8000
     prefix: api/v1/auth
-    url: ${.protocol}${.host}:${.port}/${.prefix}
-    verify_url: ${.url}/verfiy
+    url: ${.host}:${.port}/${.prefix}
+    verify_url: ${.url}/verify
