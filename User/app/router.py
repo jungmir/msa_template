@@ -25,9 +25,7 @@ async def is_verify(token: str) -> Dict[str, Any]:
         resp = await client.get(cfg.auth.verify_url, headers=headers)
     if resp.status_code == status.HTTP_401_UNAUTHORIZED:
         raise HTTPException(status_code=resp.status_code, detail="Invalid token")
-    payload = token.split(".")[1]
-    decoded_payload = b64decode(payload)
-    return json.loads(decoded_payload.decode())
+    return resp.json()
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
