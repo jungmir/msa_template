@@ -56,22 +56,16 @@ sequenceDiagram
 
 ## Data
 
-### DataBase
-
 ```mermaid
 classDiagram
     class User {
-        -int id
+        -int _id
         -str user_id
         -str password
         -str name
+        -str role
+        -int age
     }
-```
-
-### Storage
-
-```mermaid
-classDiagram
     class Token {
         -str access_token
         -str type
