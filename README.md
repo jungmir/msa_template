@@ -32,11 +32,14 @@ pip3 install -r requirements/requirements.txt
 ### Build and Run
 
 ```Bash
+# create docker network
+docker network create closed --subnet ${subnet} --gateway ${gateway}
+
 # build
-sh build.sh
+docker-compose build
 
 # run
-sh run.sh
+docker-compose up -d
 ```
 
 ## Reference
