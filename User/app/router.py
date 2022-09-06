@@ -20,7 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/token", scheme_name="Bear
 
 async def is_verify(token: str) -> Dict[str, Any]:
     headers = {"Authorziation": token}
-    async with httpx.ASyncClient() as client:
+    async with httpx.AsyncClient() as client:
         resp = await client.get(cfg.auth.verify_url, headers=headers)
     if resp.status_code == status.HTTP_401_UNAUTHORIZED:
         raise HTTPException(status_code=resp.status_code, detail="Invalid token")
