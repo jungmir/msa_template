@@ -12,13 +12,15 @@
 
 ## Installation
 
-### User Service
+### Setup
 
 ```Bash
 # Clone Repository
 git clone https://github.com/jungmir/msa_template.git
 
 # Move into project
+cd msa_template/${service name}
+# e.g)
 cd msa_template/User
 
 # install application dependencies
@@ -29,14 +31,11 @@ poetry check && poetry install
 pip3 install -r requirements/requirements.txt
 ```
 
-### Build and Run
+### Run
 
 ```Bash
-# create docker network
+# create docker network if first time
 docker network create closed --subnet ${subnet} --gateway ${gateway}
-
-# build
-docker-compose build
 
 # run
 docker-compose up -d
