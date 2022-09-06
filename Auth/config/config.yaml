@@ -7,8 +7,7 @@ token:
     hours: 1
 server:
   user:
-    protocol: http://
-    host: user_service
+    host: http://user_service
     port: 8000
     prefix: api/v1/user
-    url: ${.protocol}${.host}:${.port}/${.prefix}
+    url: ${.host}:${.port}/${.prefix}
