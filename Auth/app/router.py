@@ -20,7 +20,9 @@ async def generate_token(
     response: Dict[str, Any] = {}
     token = Token.generate(user)
     response.update(result=token)
-    return JSONResponse(content=jsonable_encoder(response))
+    return JSONResponse(
+        content=jsonable_encoder(response), status_code=status.HTTP_201_CREATED
+    )
 
 
 @router.get("/verify", status_code=status.HTTP_200_OK)
@@ -28,6 +30,5 @@ async def verify_token(authorization: str = Header()) -> Response:
     token_type, access_token = authorization.split()
     token = Token(type=token_type, access_token=access_token)
     if not token.verify():
-        headers = dict(user=token.payload)
-        return Response(status_code=status.HTTP_401_UNAUTHORIZED, headers=headers)
-    return Response()
+        return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+    return Response(status_code=status.HTTP_200_OK)
