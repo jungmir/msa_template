@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Union
+from base64 import b64decode
+from typing import Any, Dict
 
 import httpx
 from conf import config
@@ -15,16 +16,18 @@ from models import CreateUser, SimpleUser, UpdateUser, User, UserRole
 
 router = APIRouter()
 cfg = config("server")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/token", scheme_name="Bearer")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/token")
 
 
 async def is_verify(token: str) -> Dict[str, Any]:
-    headers = {"Authorziation": token}
+    headers = {"Authorization": f"Bearer {token}"}
     async with httpx.AsyncClient() as client:
         resp = await client.get(cfg.auth.verify_url, headers=headers)
     if resp.status_code == status.HTTP_401_UNAUTHORIZED:
         raise HTTPException(status_code=resp.status_code, detail="Invalid token")
-    return resp.headers.get("user", {})
+    payload = token.split(".")[1]
+    decoded_payload = b64decode(payload)
+    return json.loads(decoded_payload.decode())
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
@@ -40,8 +43,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
 @router.post("/token", status_code=status.HTTP_200_OK)
 async def issued_token_for_authentication(
     form_data: OAuth2PasswordRequestForm = Depends(),
-) -> Response:
-    response: Dict[str, Any] = {}
+) -> Dict[str, str]:
     mongo = Mongo()
     with mongo("user") as user_database:
         query = dict(user_id=form_data.username)
@@ -62,9 +64,8 @@ async def issued_token_for_authentication(
                 content=jsonable_encoder(resp.json()), status_code=resp.status_code
             )
         response_json = resp.json()
-        token = response_json.get("result", {}).get("token")
-        response.update(result=token)
-        return JSONResponse(content=jsonable_encoder(response))
+        token = response_json.get("result", {})
+        return token
 
 
 @router.post("/users", status_code=status.HTTP_201_CREATED)
