@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from os import environ
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 from uuid import uuid4
 
 from conf import config
 from jose import JWTError, jwt
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel
 
 cfg = config("token")
 TOKEN_TYPE = "Bearer"
@@ -22,21 +22,19 @@ class Token(BaseModel):
     type: str
 
     @staticmethod
-    def generate(user: UserData) -> Token:
+    def generate(user: SimpleUser) -> Token:
         payload = user.dict()
         now = datetime.now()
         expired = now + EXPIRY
-        payload.update(exp=expired.timestamp())
+        payload.update(exp=expired.timestamp(), iat=now.timestamp())
         access_token = jwt.encode(payload, SECRET, algorithm=ALGORITHM)
         return Token(access_token=access_token, type=TOKEN_TYPE)
 
-    @classmethod
-    def verify(cls, authorization: str) -> bool:
-        token_type, access_token = authorization.split()
-        if token_type != TOKEN_TYPE:
+    def verify(self) -> bool:
+        if self.type != TOKEN_TYPE:
             return False
         try:
-            payload = jwt.decode(access_token, SECRET, algorithms=[ALGORITHM])
+            payload = jwt.decode(self.access_token, SECRET, algorithms=[ALGORITHM])
         except JWTError:
             # invalid token or expired token
             return False
@@ -47,20 +45,6 @@ class Token(BaseModel):
         return jwt.decode(self.access_token, SECRET, algorithms=[ALGORITHM])
 
 
-class RefreshToken(Token):
-    refresh_token: str
-
-
-class UserData(BaseModel):
-    sub: str = Field(alias="_id")
-    name: str
-    password: str
+class SimpleUser(BaseModel):
+    sub: str
     role: str
-
-    class Config:
-        arbitrary_types_allowed = True
-
-
-class TokenPayload(UserData):
-    iat: float
-    exp: float
