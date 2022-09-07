@@ -8,8 +8,6 @@ services:
     env_file: .env
     ports:
       - "${PORT}:8000"
-    volumes:
-      - .:/workspace
     networks:
       - closed
 
