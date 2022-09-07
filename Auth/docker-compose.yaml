@@ -11,9 +11,6 @@ services:
     networks:
       - closed
 
-volumes:
-  mongo:
-
 networks:
   closed:
     name: closed
