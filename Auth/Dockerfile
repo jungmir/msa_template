@@ -8,6 +8,7 @@ WORKDIR /workspace
 
 COPY ./requirements/requirements.txt /workspace/requirements/requirements.txt
 COPY ./app /workspace/app
+COPY ./config /workspace/config
 
 RUN pip3 install -r ./requirements/requirements.txt
 
