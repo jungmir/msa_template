@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  user-deployment
+  labels:
+    app:  user
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+      - image:  ghcr.io/jungmir/msa_template/user_service:master
+        name: user
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+        env:
+        - name:  ENV
+          value:  prod
+        - name: MONGO_ROOT_USERNAME
+          value: admin
+        - name: MONGO_ROOT_PASSWORD
+          value: adminadmin12!@
+        ports:
+        - containerPort:  8000
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+        - name: data
+          emptyDir: {}
