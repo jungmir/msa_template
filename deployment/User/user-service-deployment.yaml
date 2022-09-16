@@ -27,9 +27,15 @@ spec:
         - name:  ENV
           value:  prod
         - name: MONGO_ROOT_USERNAME
-          value: admin
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: username
         - name: MONGO_ROOT_PASSWORD
-          value: adminadmin12!@
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: password
         ports:
         - containerPort:  8000
         volumeMounts:
