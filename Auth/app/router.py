@@ -3,14 +3,12 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from conf import config
 from fastapi import APIRouter, Body, Header, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from models import SimpleUser, Token
 
 router = APIRouter()
-cfg = config("server")
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
