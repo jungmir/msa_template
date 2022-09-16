@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  user-deployment
+  name:  mongodb-deployment
   labels:
-    app:  user
+    app:  mongodb
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: user
+      app: mongodb
   template:
     metadata:
       labels:
-        app: user
+        app:  mongodb
     spec:
       containers:
-      - image:  ghcr.io/jungmir/msa_template/user_service:master
-        name: user
+      - image:  mongo
+        name: mongodb
         resources:
           limits:
             memory: 512Mi
@@ -24,15 +24,31 @@ spec:
         env:
         - name:  ENV
           value:  prod
-        - name: MONGO_ROOT_USERNAME
+        - name: MONGO_INITDB_ROOT_USERNAME
           value: admin
-        - name: MONGO_ROOT_PASSWORD
+        - name: MONGO_INITDB_ROOT_PASSWORD
           value: adminadmin12!@
         ports:
-        - containerPort:  8000
+        - containerPort:  27017
         volumeMounts:
         - mountPath: /data
           name: data
       volumes:
         - name: data
           emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  mongodb-service
+  labels:
+    app:  mongodb
+spec:
+  selector:
+    app:  mongodb
+  type:  NodePort
+  ports:
+    - port:  27017
+      targetPort:  27017
+      nodePort: 32000
+      protocol: TCP
