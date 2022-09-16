@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  auth-deployment
+  namespace: auth-service
+  labels:
+    app: auth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - image:  ghcr.io/jungmir/msa_template/auth_service:master
+        imagePullPolicy: Always
+        name: auth
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+        env:
+        - name:  ENV
+          value:  prod
+        ports:
+        - containerPort:  8000
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  auth-service
+  namespace: auth-service
+  labels:
+    app: auth
+spec:
+  selector:
+    app: auth
+  type:  NodePort
+  ports:
+    - port:  8000
+      targetPort:  8000
+      nodePort: 31100
+      protocol: TCP
