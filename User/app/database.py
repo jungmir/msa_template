@@ -42,7 +42,7 @@ class Mongo:
             password=PASSWORD,
             tz_aware=True,
         )
-        self.__database = self.__client.get_database(cfg.db_name)
+        self.__database = self.__client.get_database(cfg.name)
 
     def __call__(self, collection: str) -> Mongo:
         if self.__instance is None:
@@ -57,7 +57,7 @@ class Mongo:
     def __enter__(self) -> Mongo:
         self.session = self.__client.start_session()
         self.__client = self.session.client
-        self.__database = self.__client.get_database(cfg.db_name)
+        self.__database = self.__client.get_database(cfg.name)
         self.__collection = self.__database.get_collection(self.collection)
         return self
 
