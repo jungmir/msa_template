@@ -5,9 +5,3 @@ token:
   algorithm: HS256
   expiry:
     hours: 1
-server:
-  user:
-    host: http://user_service
-    port: 8000
-    prefix: api/v1/user
-    url: ${.host}:${.port}/${.prefix}
