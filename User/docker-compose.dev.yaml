@@ -22,6 +22,7 @@ services:
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     container_name: user_service
+    command: python3 main.py database.host=mongo database.port=27017 server.auth.url=http://auth_service:8000/api/v1/auth
     env_file: .env
     environment:
       MONGO_USER_NAME: ${MONGO_ROOT_USERNAME}
