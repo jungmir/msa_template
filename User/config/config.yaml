@@ -2,7 +2,7 @@ app:
   name: User
   version: 0.1.0
 database:
-  host: http://192.168.49.2
+  host: 192.168.49.2
   port: 32000
   name: ${app.name}
 server:
