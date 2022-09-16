@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  mongodb-deployment
+  labels:
+    app:  mongodb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app:  mongodb
+    spec:
+      containers:
+      - image:  mongo
+        name: mongodb
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+        env:
+        - name:  ENV
+          value:  prod
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: admin
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: adminadmin12!@
+        ports:
+        - containerPort:  27017
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  mongodb-service
+  labels:
+    app:  mongodb
+spec:
+  selector:
+    app:  mongodb
+  type:  NodePort
+  ports:
+    - port:  27017
+      targetPort:  27017
+      nodePort: 32000
+      protocol: TCP
