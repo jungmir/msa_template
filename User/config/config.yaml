@@ -2,13 +2,9 @@ app:
   name: User
   version: 0.1.0
 database:
-  host: mongo
-  port: 27017
-  db_name: ${app.name}
+  host: http://192.168.49.2
+  port: 32000
+  name: ${app.name}
 server:
   auth:
-    host: http://auth_service
-    port: 8000
-    prefix: api/v1/auth
-    url: ${.host}:${.port}/${.prefix}
-    verify_url: ${.url}/verify
+    url: http://192.168.49.2:33000/api/v1/auth
