@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
       - image:  ghcr.io/jungmir/msa_template/user_service:master
+        imagePullPolicy: Always
         name: user
         resources:
           limits:
