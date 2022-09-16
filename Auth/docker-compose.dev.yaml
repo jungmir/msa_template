@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     container_name: auth_service
+    command: python3 main.py
     env_file: .env
     ports:
       - "${PORT}:8000"
