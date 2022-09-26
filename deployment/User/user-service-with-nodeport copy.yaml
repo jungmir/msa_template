@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  user-deployment
+  namespace: user-service
+  labels:
+    app:  user
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app:  user
+  template:
+    metadata:
+      labels:
+        app:  user
+    spec:
+      containers:
+      - image:  ghcr.io/jungmir/msa_template/user_service:master
+        imagePullPolicy: Always
+        name: user
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+        env:
+        - name:  ENV
+          value:  prod
+        - name: MONGO_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: username
+        - name: MONGO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: password
+        ports:
+        - containerPort:  8000
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  user-service
+  namespace: user-service
+  labels:
+    app:  user
+spec:
+  selector:
+    app:  user
+  type:  NodePort
+  ports:
+    - port:  8000
+      targetPort:  8000
+      nodePort: 31000
+      protocol: TCP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database
+  namespace: user-service
+data:
+   username: YWRtaW4=
+   password: YWRtaW5hZG1pbjEyIyQ=
+type: Opaque
