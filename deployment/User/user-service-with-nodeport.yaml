@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name:  user-deployment
-  namespace: user-service
+  namespace: mir
   labels:
     app:  user
 spec:
@@ -21,8 +21,8 @@ spec:
         name: user
         resources:
           limits:
-            memory: 512Mi
-            cpu: "1"
+            memory: 128Mi
+            cpu: 50m
         env:
         - name:  ENV
           value:  prod
@@ -49,7 +49,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name:  user-service
-  namespace: user-service
+  namespace: mir
   labels:
     app:  user
 spec:
@@ -66,7 +66,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: database
-  namespace: user-service
+  namespace: mir
 data:
    username: YWRtaW4=
    password: YWRtaW5hZG1pbjEyIyQ=

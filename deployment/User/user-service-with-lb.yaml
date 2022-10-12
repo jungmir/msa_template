@@ -20,8 +20,8 @@ spec:
         name: user
         resources:
           limits:
-            memory: 512Mi
-            cpu: "1"
+            memory: 128Mi
+            cpu: 50m
         env:
         - name:  ENV
           value:  prod
